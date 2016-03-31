@@ -1,16 +1,23 @@
 %{
 
+/*
+********************************************************************************
+*   Copyright(C) 2016 Filipe Oliveira, Universidade do Minho
+*   All Rights Reserved.
+*
+********************************************************************************
+*   Content : Simple bibtex category counter (phDThesis, Misc, InProceeding,
+*             etc.), that occur in a document
+*
+********************************************************************************/
+
 #include <stdio.h>
 #include <glib.h>
 #include <stdlib.h>
 #include <string.h>
 
-char* eu;
-char* ele;
-int contador = 0;
-
 //HashTable
-GHashTable *table; 
+GHashTable table; 
 
 %}
 
@@ -19,22 +26,19 @@ CATEG ^@{LETRA}+\{
 
 %%
 {CATEG}      {
-              yytext++; yytext[yyleng-2]='\0'; printf("%s",yytext);
+              yytext++; yytext[yyleng-2]='\0'; 
               char* key = strdup(yytext);
               if ( g_hash_table_contains ( table ,(void*) key ) ){
                 int value = (int) g_hash_table_lookup ( table,(void*) key);
-  value++;
-g_hash_table_replace (  table, (void*) key, (void*) value );
-                  //            printf("%s already exists: \n", yytext );
+                value++;
+                g_hash_table_replace (  table, (void*) key, (void*) value );
               }
               else {
-              int value = 1;
-//              printf("\t>>>>>>>>>>>>>>>>>>>>>>>>>>>>NEW %s: \n", yytext );
-              gboolean add_result = g_hash_table_insert (  table, (void*) key, (void*) value );
-//              add_result == 1 ? printf("ADD OK\n") : printf("!!!!!! ERROR ADD !!!!!!!!\n");
-}
+                int value = 1;
+                gboolean add_result = g_hash_table_insert (  table, (void*) key, (void*) value );
+              }
              }
-.            { }
+.|\n|\t      {;}
 %%
 
 int yywrap(){return 1;}
@@ -44,16 +48,16 @@ static void print_key_value(gpointer key, gpointer value, gpointer userdata)
 {
         int val = (int) value;
         char* ke = (char*) key;
-        printf("%s %d\n", ke, val);
-
+        printf("<li>%s : %d</li>\n", ke, val);
 }
 
 
 int main(){
   table = g_hash_table_new(g_str_hash, g_str_equal);
-
-yylex();
-g_hash_table_foreach(table,print_key_value, NULL );
-return (0);
+  yylex();
+  printf("<!DOCTYPE html>\n<html>\n<body>\n<ul>\n");
+  g_hash_table_foreach(table,print_key_value, NULL );
+  printf("</ul>\n</body>\n</html>\n");
+  return (0);
 }
 

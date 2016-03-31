@@ -371,25 +371,25 @@ struct yy_trans_info
 	};
 static yyconst flex_int16_t yy_accept[10] =
     {   0,
-        0,    0,    4,    2,    3,    2,    0,    1,    0
+        0,    0,    4,    2,    2,    2,    0,    1,    0
     } ;
 
 static yyconst flex_int32_t yy_ec[256] =
     {   0,
-        1,    1,    1,    1,    1,    1,    1,    1,    1,    2,
+        1,    1,    1,    1,    1,    1,    1,    1,    2,    3,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    3,    4,    4,    4,    4,    4,    4,
-        4,    4,    4,    4,    4,    4,    4,    4,    4,    4,
-        4,    4,    4,    4,    4,    4,    4,    4,    4,    4,
-        1,    1,    1,    1,    1,    1,    4,    4,    4,    4,
+        1,    1,    1,    4,    5,    5,    5,    5,    5,    5,
+        5,    5,    5,    5,    5,    5,    5,    5,    5,    5,
+        5,    5,    5,    5,    5,    5,    5,    5,    5,    5,
+        1,    1,    1,    1,    1,    1,    5,    5,    5,    5,
 
-        4,    4,    4,    4,    4,    4,    4,    4,    4,    4,
-        4,    4,    4,    4,    4,    4,    4,    4,    4,    4,
-        4,    4,    5,    1,    1,    1,    1,    1,    1,    1,
+        5,    5,    5,    5,    5,    5,    5,    5,    5,    5,
+        5,    5,    5,    5,    5,    5,    5,    5,    5,    5,
+        5,    5,    6,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -406,15 +406,15 @@ static yyconst flex_int32_t yy_ec[256] =
         1,    1,    1,    1,    1
     } ;
 
-static yyconst flex_int32_t yy_meta[6] =
+static yyconst flex_int32_t yy_meta[7] =
     {   0,
-        1,    1,    1,    2,    1
+        1,    1,    1,    1,    2,    1
     } ;
 
 static yyconst flex_int16_t yy_base[12] =
     {   0,
-        7,    0,    8,   10,   10,    0,    2,   10,   10,    3,
-        4
+        7,    0,    8,   10,   10,    0,    1,   10,   10,    4,
+        1
     } ;
 
 static yyconst flex_int16_t yy_def[12] =
@@ -423,16 +423,16 @@ static yyconst flex_int16_t yy_def[12] =
         9
     } ;
 
-static yyconst flex_int16_t yy_nxt[16] =
+static yyconst flex_int16_t yy_nxt[17] =
     {   0,
-        9,    5,    6,    4,    4,    7,    8,    9,    5,    3,
-        9,    9,    9,    9,    9
+        9,    5,    7,    6,    4,    4,    8,    9,    5,    3,
+        9,    9,    9,    9,    9,    9
     } ;
 
-static yyconst flex_int16_t yy_chk[16] =
+static yyconst flex_int16_t yy_chk[17] =
     {   0,
-        0,    2,    2,   10,   10,   11,    7,    3,    1,    9,
-        9,    9,    9,    9,    9
+        0,    2,   11,    2,   10,   10,    7,    3,    1,    9,
+        9,    9,    9,    9,    9,    9
     } ;
 
 static yy_state_type yy_last_accepting_state;
@@ -452,19 +452,26 @@ char *yytext;
 #line 1 "bib_norm.l"
 #line 2 "bib_norm.l"
 
+/*
+********************************************************************************
+*   Copyright(C) 2016 Filipe Oliveira, Universidade do Minho
+*   All Rights Reserved.
+*
+********************************************************************************
+*   Content : Simple bibtex category counter (phDThesis, Misc, InProceeding,
+*             etc.), that occur in a document
+*
+********************************************************************************/
+
 #include <stdio.h>
 #include <glib.h>
 #include <stdlib.h>
 #include <string.h>
 
-char* eu;
-char* ele;
-int contador = 0;
-
 //HashTable
-GHashTable *table; 
+GHashTable table; 
 
-#line 468 "lex.yy.c"
+#line 475 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -649,9 +656,9 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 20 "bib_norm.l"
+#line 27 "bib_norm.l"
 
-#line 655 "lex.yy.c"
+#line 662 "lex.yy.c"
 
 	if ( !(yy_init) )
 		{
@@ -737,35 +744,33 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 21 "bib_norm.l"
+#line 28 "bib_norm.l"
 {
-              yytext++; yytext[yyleng-2]='\0'; printf("%s",yytext);
+              yytext++; yytext[yyleng-2]='\0'; 
               char* key = strdup(yytext);
               if ( g_hash_table_contains ( table ,(void*) key ) ){
                 int value = (int) g_hash_table_lookup ( table,(void*) key);
-  value++;
-g_hash_table_replace (  table, (void*) key, (void*) value );
-                  //            printf("%s already exists: \n", yytext );
+                value++;
+                g_hash_table_replace (  table, (void*) key, (void*) value );
               }
               else {
-              int value = 1;
-//              printf("\t>>>>>>>>>>>>>>>>>>>>>>>>>>>>NEW %s: \n", yytext );
-              gboolean add_result = g_hash_table_insert (  table, (void*) key, (void*) value );
-//              add_result == 1 ? printf("ADD OK\n") : printf("!!!!!! ERROR ADD !!!!!!!!\n");
-}
+                int value = 1;
+                gboolean add_result = g_hash_table_insert (  table, (void*) key, (void*) value );
+              }
              }
 	YY_BREAK
 case 2:
+/* rule 2 can match eol */
 YY_RULE_SETUP
-#line 37 "bib_norm.l"
-{ }
+#line 41 "bib_norm.l"
+{;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 38 "bib_norm.l"
+#line 42 "bib_norm.l"
 ECHO;
 	YY_BREAK
-#line 769 "lex.yy.c"
+#line 774 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1765,7 +1770,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 38 "bib_norm.l"
+#line 42 "bib_norm.l"
 
 
 
@@ -1776,17 +1781,17 @@ static void print_key_value(gpointer key, gpointer value, gpointer userdata)
 {
         int val = (int) value;
         char* ke = (char*) key;
-        printf("%s %d\n", ke, val);
-
+        printf("<li>%s : %d</li>\n", ke, val);
 }
 
 
 int main(){
   table = g_hash_table_new(g_str_hash, g_str_equal);
-
-yylex();
-g_hash_table_foreach(table,print_key_value, NULL );
-return (0);
+  yylex();
+  printf("<!DOCTYPE html>\n<html>\n<body>\n<ul>\n");
+  g_hash_table_foreach(table,print_key_value, NULL );
+  printf("</ul>\n</body>\n</html>\n");
+  return (0);
 }
 
 
