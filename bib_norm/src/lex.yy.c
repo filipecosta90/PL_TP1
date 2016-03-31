@@ -411,27 +411,25 @@ static yyconst flex_int32_t yy_meta[7] =
         1,    1,    1,    1,    2,    1
     } ;
 
-static yyconst flex_int16_t yy_base[12] =
+static yyconst flex_int16_t yy_base[11] =
     {   0,
-        7,    0,    8,   10,   10,    0,    1,   10,   10,    4,
-        1
+        0,    0,    9,   10,   10,    0,    2,   10,   10,    5
     } ;
 
-static yyconst flex_int16_t yy_def[12] =
+static yyconst flex_int16_t yy_def[11] =
     {   0,
-       10,   10,    9,    9,    9,   11,   11,    9,    0,    9,
-        9
+        9,    1,    9,    9,    9,   10,   10,    9,    0,    9
     } ;
 
 static yyconst flex_int16_t yy_nxt[17] =
     {   0,
-        9,    5,    7,    6,    4,    4,    8,    9,    5,    3,
+        4,    5,    4,    6,    4,    4,    7,    8,    9,    3,
         9,    9,    9,    9,    9,    9
     } ;
 
 static yyconst flex_int16_t yy_chk[17] =
     {   0,
-        0,    2,   11,    2,   10,   10,    7,    3,    1,    9,
+        1,    1,    1,    1,    1,    1,   10,    7,    3,    9,
         9,    9,    9,    9,    9,    9
     } ;
 
@@ -449,8 +447,8 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "bib_norm.l"
-#line 2 "bib_norm.l"
+#line 1 "bib_norm_1.l"
+#line 2 "bib_norm_1.l"
 
 /*
 ********************************************************************************
@@ -469,9 +467,9 @@ char *yytext;
 #include <string.h>
 
 //HashTable
-GHashTable table; 
+GHashTable *table; 
 
-#line 475 "lex.yy.c"
+#line 473 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -643,9 +641,6 @@ extern int yylex (void);
 #endif
 
 #define YY_RULE_SETUP \
-	if ( yyleng > 0 ) \
-		YY_CURRENT_BUFFER_LVALUE->yy_at_bol = \
-				(yytext[yyleng - 1] == '\n'); \
 	YY_USER_ACTION
 
 /** The main scanner function which does all the work.
@@ -656,9 +651,9 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 27 "bib_norm.l"
+#line 27 "bib_norm_1.l"
 
-#line 662 "lex.yy.c"
+#line 657 "lex.yy.c"
 
 	if ( !(yy_init) )
 		{
@@ -699,7 +694,6 @@ YY_DECL
 		yy_bp = yy_cp;
 
 		yy_current_state = (yy_start);
-		yy_current_state += YY_AT_BOL();
 yy_match:
 		do
 			{
@@ -744,33 +738,34 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 28 "bib_norm.l"
+#line 28 "bib_norm_1.l"
 {
-              yytext++; yytext[yyleng-2]='\0'; 
-              char* key = strdup(yytext);
+              yytext++; yytext[yyleng-2]='\0';
+              char* key = g_ascii_strdown (yytext, yyleng-2);
               if ( g_hash_table_contains ( table ,(void*) key ) ){
-                int value = (int) g_hash_table_lookup ( table,(void*) key);
+                int value;
+                value = GPOINTER_TO_INT( g_hash_table_lookup ( table,(void*) key));
                 value++;
-                g_hash_table_replace (  table, (void*) key, (void*) value );
+                g_hash_table_replace (  table, (void*) key,GINT_TO_POINTER(value) );
               }
               else {
                 int value = 1;
-                gboolean add_result = g_hash_table_insert (  table, (void*) key, (void*) value );
+                gboolean add_result = g_hash_table_insert (  table, (void*) key,  GINT_TO_POINTER(value) );
               }
              }
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 41 "bib_norm.l"
-{;}
+#line 42 "bib_norm_1.l"
+{ ; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 42 "bib_norm.l"
+#line 43 "bib_norm_1.l"
 ECHO;
 	YY_BREAK
-#line 774 "lex.yy.c"
+#line 769 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1050,7 +1045,6 @@ static int yy_get_next_buffer (void)
 	register char *yy_cp;
     
 	yy_current_state = (yy_start);
-	yy_current_state += YY_AT_BOL();
 
 	for ( yy_cp = (yytext_ptr) + YY_MORE_ADJ; yy_cp < (yy_c_buf_p); ++yy_cp )
 		{
@@ -1206,8 +1200,6 @@ static int yy_get_next_buffer (void)
 	c = *(unsigned char *) (yy_c_buf_p);	/* cast for 8-bit char's */
 	*(yy_c_buf_p) = '\0';	/* preserve yytext */
 	(yy_hold_char) = *++(yy_c_buf_p);
-
-	YY_CURRENT_BUFFER_LVALUE->yy_at_bol = (c == '\n');
 
 	return c;
 }
@@ -1770,7 +1762,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 42 "bib_norm.l"
+#line 43 "bib_norm_1.l"
 
 
 

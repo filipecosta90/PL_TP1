@@ -17,28 +17,29 @@
 #include <string.h>
 
 //HashTable
-GHashTable table; 
+GHashTable *table; 
 
 %}
 
 LETRA [A-Za-z]
-CATEG ^@{LETRA}+\{ 
+CATEG \@{LETRA}+\{
 
 %%
 {CATEG}      {
-              yytext++; yytext[yyleng-2]='\0'; 
-              char* key = strdup(yytext);
+              yytext++; yytext[yyleng-2]='\0';
+              char* key = g_ascii_strdown (yytext, yyleng-2);
               if ( g_hash_table_contains ( table ,(void*) key ) ){
-                int value = (int) g_hash_table_lookup ( table,(void*) key);
+                int value;
+                value = GPOINTER_TO_INT( g_hash_table_lookup ( table,(void*) key));
                 value++;
-                g_hash_table_replace (  table, (void*) key, (void*) value );
+                g_hash_table_replace (  table, (void*) key,GINT_TO_POINTER(value) );
               }
               else {
                 int value = 1;
-                gboolean add_result = g_hash_table_insert (  table, (void*) key, (void*) value );
+                gboolean add_result = g_hash_table_insert (  table, (void*) key,  GINT_TO_POINTER(value) );
               }
              }
-.|\n|\t      {;}
+.|\n|\t { ; }
 %%
 
 int yywrap(){return 1;}
