@@ -30,9 +30,9 @@ AUTOR_START author[ ]*=[ ]*[\"\{]
 
 %%
 
-{AUTOR_START}         { printf("Authors:::::.%s\n", yytext); BEGIN AUTOR_STATE; }
-<AUTOR_STATE>.+(\\\{[^\}]\})?and      { printf("\tAuthor:%s\n",yytext); BEGIN AUTOR_STATE; }
-    /*<AUTOR_STATE>[^\}]+(\\\{[^\}]\})?[^\}]*(\}|\")  { printf("\tEnd Author:%s\n",yytext); BEGIN INITIAL; }*/
+{AUTOR_START}         { printf("##\t\tAuthors:::::.%s\n", yytext); BEGIN AUTOR_STATE; }
+<AUTOR_STATE>.+(\\\{[^\}]\})?and      { printf("##\t\tAuthor:%s\n",yytext); BEGIN AUTOR_STATE; }
+<AUTOR_STATE>[^\}]+(\\\{[^\}]\})?[^\}]*(\}|\")  { printf("##\t\tEnd Author:%s\n",yytext); BEGIN INITIAL; }
 
 .|\n|\t      {;}
 

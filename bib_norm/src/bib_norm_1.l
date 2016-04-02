@@ -23,9 +23,11 @@ GHashTable *table;
 
 LETRA [A-Za-z]
 CATEG \@{LETRA}+\{
+LETRA_NUM [0-9A-Za-z]
+ID ({LETRA_NUM}|:)+
 
 %%
-{CATEG}      {
+{CATEG}/[^=]*,      {
               yytext++; yytext[yyleng-2]='\0';
               char* key = g_ascii_strdown (yytext, yyleng-2);
               if ( g_hash_table_contains ( table ,(void*) key ) ){
