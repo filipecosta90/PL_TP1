@@ -41,6 +41,7 @@ FIELD_BREAK_NUM [^=]+
 FIELD_START [\{\"]
 AUTHOR_ID author[ ]*=[ ]*
 TITLE_ID title[ ]*=[ ]*
+AUTHOR_SEP [ ]and[ ]
 
 %x INSIDE IN_AUTHOR IN_FIELD_TXT IN_FIELD_NUM INSIDE_CLEAN
 
@@ -85,20 +86,25 @@ TITLE_ID title[ ]*=[ ]*
                           BEGIN IN_FIELD_TXT;} 
                           }
 
-<IN_AUTHOR>^.+?\\and     {   yytext[yyleng-3]='\0';
+<IN_AUTHOR>^.*{AUTHOR_SEP}     {   
                           char *author;
+                          printf("have more authors\n");
                           author = strdup ( yytext );
                           author = g_strchomp ( author );
                           author = g_strchug ( author );
-                          BEGIN IN_AUTHOR;
+                              BEGIN IN_AUTHOR;
                           }
 
-<IN_AUTHOR>{FIELD_BREAK}[ ]*, {
-                          yytext[yyleng-2]='\0';
-                          char* author;
+<IN_AUTHOR>.*,     {   
+                          char *author;
+                          printf("end author\n");
+                          author = strdup ( yytext );
                           author = g_strchomp ( author );
                           author = g_strchug ( author );
-                          BEGIN INSIDE_CLEAN;}
+                              BEGIN INSIDE_CLEAN;
+                          }
+
+
 
 <IN_FIELD_NUM>{FIELD_BREAK_NUM}[ ]*, {
                             yytext[yyleng-2]='\0';
