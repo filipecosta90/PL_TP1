@@ -19,12 +19,15 @@
 //HashTable
 GHashTable *txt_fields_table; 
 GHashTable *num_fields_table; 
+GHashTable *authors_table; 
 char* field_id;
 char* field;
 char* author_id = "author";
 char* title_id = "title";
 char* author_key;
 char* title_key;
+char* author_initial;
+char* author_lastname;
 
 //function sig
 void pretty_print();
@@ -36,14 +39,15 @@ LETRA_NUM [0-9A-Za-z]
 NUM [0-9]
 CATEG \@{LETRA}+\{
 FIELD_ID [^=]+=[ ]*
-FIELD_BREAK [^=]+(\"|\})
+FIELD_BREAK [^=]+[ ]?(\"|\})
 FIELD_BREAK_NUM [^=]+
 FIELD_START [\{\"]
 AUTHOR_ID author[ ]*=[ ]*
 TITLE_ID title[ ]*=[ ]*
 AUTHOR_SEP [ ]and[ ]
-
-%x INSIDE IN_AUTHOR IN_FIELD_TXT IN_FIELD_NUM INSIDE_CLEAN
+AUTHOR_BREAK [^=]+(\"|\})
+ 
+%x INSIDE IN_AUTHOR IN_FIELD_TXT IN_FIELD_NUM INSIDE_CLEAN AUTHOR_DIV START_AUTHOR
 
 %%
 
@@ -77,43 +81,70 @@ AUTHOR_SEP [ ]and[ ]
                           field_id = g_strchug ( field_id );
                           if (strstr(field_id, author_id ) != NULL) {
                               author_key = strdup(field_id);
-                              BEGIN IN_AUTHOR;
+                              BEGIN START_AUTHOR;
                           }
-                          if (strstr(field_id, title_id ) != NULL) {
-                              title_key = strdup(field_id);
-                          }
-                          if (strstr(field_id, author_id ) == NULL) {
-                          BEGIN IN_FIELD_TXT;} 
-                          }
-
-<IN_AUTHOR>^.*{AUTHOR_SEP}     {   
-                          char *author;
-                          printf("have more authors\n");
-                          author = strdup ( yytext );
-                          author = g_strchomp ( author );
-                          author = g_strchug ( author );
-                              BEGIN IN_AUTHOR;
+                          else {
+                              if (strstr(field_id, title_id ) != NULL) {
+                                  title_key = strdup(field_id);
+                              }
+                                  BEGIN IN_FIELD_TXT;
+                          } 
                           }
 
-<IN_AUTHOR>.*,     {   
-                          char *author;
-                          printf("end author\n");
-                          author = strdup ( yytext );
-                          author = g_strchomp ( author );
-                          author = g_strchug ( author );
-                              BEGIN INSIDE_CLEAN;
+<START_AUTHOR>.           {
+                            author_initial = (char*) malloc ( 4* sizeof(char));
+                            author_initial[0] = yytext[0];
+                            author_initial[1] = '.';
+                            author_initial[2]=' ';
+                            author_initial[3]='\0';
+                            BEGIN IN_AUTHOR;
+                         }
+
+
+<IN_AUTHOR>[^= \n\t]+/[ ]and[ ]     {   
+                          author_lastname = strdup ( yytext );
+                          author_lastname = g_strchomp ( author_lastname );
+                          author_lastname = g_strchug ( author_lastname );
+                          char *initial_plus_lastname;
+                          int size = strlen(author_lastname);
+                          size += strlen( author_initial) + 1;
+                          initial_plus_lastname = (char*) malloc ( size * sizeof(char));
+                          strcpy(initial_plus_lastname, author_initial);
+                          strcat(initial_plus_lastname, author_lastname);
+                          g_hash_table_insert (  authors_table, (void*) initial_plus_lastname,   GINT_TO_POINTER (0) );
+                          BEGIN AUTHOR_DIV;
                           }
 
 
+<IN_AUTHOR>[^= \n\t]+[ ]?(\"|\})/,    { 
+                          yytext[yyleng-1]='\0';
+                          author_lastname = strdup ( yytext );
+                          author_lastname = g_strchomp ( author_lastname );
+                          author_lastname = g_strchug ( author_lastname );
+                          char *initial_plus_lastname;
+                          int size = strlen(author_lastname);
+                          size += strlen( author_initial) + 1;
+                          initial_plus_lastname = (char*) malloc ( size * sizeof(char));
+                          strcpy(initial_plus_lastname, author_initial);
+                          strcat(initial_plus_lastname, author_lastname);
+                          g_hash_table_insert (  authors_table, (void*) initial_plus_lastname,   GINT_TO_POINTER (0) );
+                          BEGIN AUTHOR_DIV;
+}
+
+<IN_AUTHOR>.              { ; }
+
+<AUTHOR_DIV>,             { BEGIN INSIDE_CLEAN; }
+
+<AUTHOR_DIV>[ ]and[ ]             { BEGIN START_AUTHOR; }
 
 <IN_FIELD_NUM>{FIELD_BREAK_NUM}[ ]*, {
-                            yytext[yyleng-2]='\0';
+                            yytext[yyleng-1]='\0';
                             field = strdup(yytext);
                            g_hash_table_insert (  num_fields_table, (void*) field_id,  (void*) field );
                             BEGIN INSIDE_CLEAN;}
 
 <IN_FIELD_NUM>{FIELD_BREAK_NUM}[ ]*\n[ ]*\} {
-                            yytext[yyleng-2]='\0';
+                            yytext[yyleng-1]='\0';
                             field = strdup(yytext);
                             g_hash_table_insert (  num_fields_table, (void*) field_id,  (void*) field );
                             pretty_print();
@@ -127,8 +158,6 @@ AUTHOR_SEP [ ]and[ ]
                           field = g_strchug ( field );
                              g_hash_table_insert (  txt_fields_table, (void*) field_id,  (void*) field );
                             BEGIN INSIDE_CLEAN;}
-
-
 
 <IN_FIELD_TXT>[^=]+{FIELD_BREAK}[ ]*\n[ ]*\} { 
                             yytext[yyleng-2]='\0';
@@ -144,6 +173,10 @@ AUTHOR_SEP [ ]and[ ]
 void pretty_print(){
 int field_num = 0;
 char* current_value;
+
+GHashTableIter iter;
+gpointer key, value;
+
 if( title_key != NULL ){
     current_value =  g_hash_table_lookup ( txt_fields_table,(void*) title_key);
     g_hash_table_remove ( txt_fields_table, (void*) title_key);
@@ -151,17 +184,26 @@ if( title_key != NULL ){
     field_num++;
 }
 if ( author_key != NULL ){
-    if(field_num > 0){ printf(",\n"); }
-    current_value =  g_hash_table_lookup ( txt_fields_table,(void*) author_key);
-    g_hash_table_remove ( txt_fields_table, (void*) author_key);
-    printf("\t%s {%s}", author_key, current_value);
+
+if(field_num > 0){ printf(",\n"); }
+    printf("\t%s {", author_key);
+int number_authors = g_hash_table_size ( authors_table );
+int author_num = 1;
+g_hash_table_iter_init (&iter, authors_table );
+while (g_hash_table_iter_next (&iter, &key, &value))
+  {
+    if(author_num > 1 ){ printf("\n\t\tand "); }
+   char* name = (char*) key;
+    printf("%s", name);
+ g_hash_table_iter_remove (&iter);
+author_num++;
+} 
+  printf("}");
     field_num++;
 }
+
 int size = g_hash_table_size ( txt_fields_table );
 size += g_hash_table_size ( num_fields_table );
-
-GHashTableIter iter;
-gpointer key, value;
 
 g_hash_table_iter_init (&iter, txt_fields_table );
 while (g_hash_table_iter_next (&iter, &key, &value))
@@ -172,6 +214,7 @@ while (g_hash_table_iter_next (&iter, &key, &value))
     printf("\t%s {%s}", ke, val);
  g_hash_table_iter_remove (&iter);
 } 
+
 g_hash_table_iter_init (&iter, num_fields_table );
 while (g_hash_table_iter_next (&iter, &key, &value))
   {
@@ -189,6 +232,7 @@ int yywrap(){return 1;}
 int main(){
   txt_fields_table = g_hash_table_new(g_str_hash, g_str_equal);
   num_fields_table = g_hash_table_new(g_str_hash, g_str_equal);
+  authors_table = g_hash_table_new(g_str_hash, g_str_equal);
   yylex();
   return (0);
 }
