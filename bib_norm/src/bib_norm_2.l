@@ -38,20 +38,20 @@ LETRA [A-Za-z]
 LETRA_NUM [0-9A-Za-z]
 NUM [0-9]
 CATEG \@{LETRA}+\{
-FIELD_ID ^[^,}"][^=]*=[ ]*
-FIELD_BREAK [^=]*[ ]*(\"|\})
-FIELD_BREAK_NUM [^=]*\}?
+FIELD_ID ^[^,}"][^=]*=[ \t]*
+FIELD_BREAK [^=]*[ \t\n]*(\"|\})
+FIELD_BREAK_NUM [^=\}]*\}?
 FIELD_START [\{\"]
-AUTHOR_ID [ ]*[Aa][Uu][Tt][Hh][Oo][Rr][ ]*=[ ]*
-TITLE_ID [ ]*[Tt][Ii][Tt][Ll][Ee][ ]*=[ ]*
-AUTHOR_SEP [ ]and[ ]
+AUTHOR_ID ^[ \t]*[Aa][Uu][Tt][Hh][Oo][Rr][ \t]*=[ \t]*
+TITLE_ID ^[ \t]*[Tt][Ii][Tt][Ll][Ee][ \t]*=[ \t]*
+AUTHOR_SEP [ \t]and[ \t]
 AUTHOR_BREAK [^=]+(\"|\})
  
 %x INSIDE IN_AUTHOR IN_FIELD_TXT IN_FIELD_NUM AUTHOR_DIV START_AUTHOR
 
 %%
 
-{CATEG}[^=]*,/\n?        {
+{CATEG}[^=]*,        {
                             printf("%s\n",yytext);
                             BEGIN INSIDE;
                          }
@@ -61,17 +61,15 @@ AUTHOR_BREAK [^=]+(\"|\})
                           title_key = strdup ( yytext );
                           title_key = g_strchomp ( title_key );
                           title_key = g_strchug ( title_key );
-printf("\n|%s|\n!!!!!!!!!!!!!!!!\n", title_key);
                           field_id = strdup(title_key);
-BEGIN IN_FIELD_TXT;}
+                          BEGIN IN_FIELD_TXT;}
 
 <INSIDE>{AUTHOR_ID}{FIELD_START}  {   
                           yytext[yyleng-2]='\0';
                           author_key = strdup ( yytext );
                           author_key = g_strchomp ( author_key );
                           author_key = g_strchug ( author_key );
-                         printf("\n|%s|\n!!!!!!!!!!!!!!!!\n", author_key);
-                              BEGIN START_AUTHOR;
+                          BEGIN START_AUTHOR;
 }
 
 <INSIDE>{FIELD_ID}/{LETRA_NUM}  {   
@@ -86,15 +84,14 @@ BEGIN IN_FIELD_TXT;}
                           field_id = strdup ( yytext );
                           field_id = g_strchomp ( field_id );
                           field_id = g_strchug ( field_id );
-                          printf("##|%s|\n",field_id);
                           BEGIN IN_FIELD_TXT;
                           }
 
 <INSIDE>[ \n\t]*, { BEGIN INSIDE; }
-<INSIDE>[ \n\t]*\} { printf("POPING BACK TO INTIAL.\n CORRECTING\n"); BEGIN INITIAL; }
+<INSIDE>[ \n\t]*\} { BEGIN INITIAL; }
 
-<INSIDE>. { printf("INSIDE--ignoring|%s|\n",yytext); BEGIN INSIDE;}
 <INSIDE>\n { BEGIN INSIDE;}
+<INSIDE>. { BEGIN INSIDE;}
 
 <START_AUTHOR>.           {
                             author_initial = (char*) malloc ( 4* sizeof(char));
@@ -105,7 +102,7 @@ BEGIN IN_FIELD_TXT;}
                             BEGIN IN_AUTHOR;
                          }
 
-<IN_AUTHOR>[^= \n\t]+/[ ]and[ ]     {   
+<IN_AUTHOR>[^= \n\t]*/[ ]and[ ]     {   
                           author_lastname = strdup ( yytext );
                           author_lastname = g_strchomp ( author_lastname );
                           author_lastname = g_strchug ( author_lastname );
@@ -119,8 +116,7 @@ BEGIN IN_FIELD_TXT;}
                           BEGIN AUTHOR_DIV;
                           }
 
-
-<IN_AUTHOR>[^= \n\t]+[ ]?(\"|\})/,    { 
+<IN_AUTHOR>[^= \n\t]*[ \t]?(\"|\})/,    { 
                           yytext[yyleng-1]='\0';
                           author_lastname = strdup ( yytext );
                           author_lastname = g_strchomp ( author_lastname );
@@ -148,8 +144,8 @@ BEGIN IN_FIELD_TXT;}
                            field = g_strchomp ( field );
                           field = g_strchug ( field );
                            g_hash_table_insert (  num_fields_table, (void*) field_id,  (void*) field );
-                            printf("}\n");
-                            BEGIN INITIAL;}
+                            pretty_print();
+                           BEGIN INITIAL;}
 
 <IN_FIELD_NUM>{FIELD_BREAK_NUM}[ \n\t\r]*(#[^,=]*)?, {
                             yytext[yyleng-1]='\0';
@@ -157,6 +153,7 @@ BEGIN IN_FIELD_TXT;}
                            field = g_strchomp ( field );
                           field = g_strchug ( field );
                          g_hash_table_insert (  num_fields_table, (void*) field_id,  (void*) field );
+
                             BEGIN INSIDE;}
 
 <IN_FIELD_TXT>{FIELD_BREAK}[ \n\t\r]*\} {
@@ -165,8 +162,8 @@ BEGIN IN_FIELD_TXT;}
                            field = g_strchomp ( field );
                           field = g_strchug ( field );
                              g_hash_table_insert (  txt_fields_table, (void*) field_id,  (void*) field );
-                            printf("}\n");
-                            BEGIN INITIAL;}
+                            BEGIN INITIAL;
+                            pretty_print();}
 
 <IN_FIELD_TXT>{FIELD_BREAK}[ \n\t\r]*(#[^,=]*)?, {
                             yytext[yyleng-2]='\0';
@@ -176,8 +173,14 @@ BEGIN IN_FIELD_TXT;}
                              g_hash_table_insert (  txt_fields_table, (void*) field_id,  (void*) field );
                             BEGIN INSIDE;}
 
-<IN_FIELD_TXT>.|\n {printf("INFIELD-ignoring:|%s|", yytext);}
-<IN_FIELD_NUM>.|\n {printf("NUM-ignoring:|%s|", yytext);}
+<IN_FIELD_TXT>.|\n {;}
+<IN_FIELD_NUM>.|\n {;}
+
+{CATEG}[^\n]*\}        {
+                         printf("%s\n",yytext);
+                         }
+
+<INITIAL>.|\n {;}
 
 %%
 
@@ -235,7 +238,7 @@ while (g_hash_table_iter_next (&iter, &key, &value))
     printf("\t%s %s", ke, val);
  g_hash_table_iter_remove (&iter);
         }
-                            printf("\n}\n");
+                            printf("\n}\n\n");
 }
 
 int yywrap(){return 1;}
