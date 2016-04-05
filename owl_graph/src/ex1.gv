@@ -1,0 +1,16 @@
+digraph pl_2_1 {
+//title
+labelloc="t";
+label="OWL concept diagram";rankdir=TB;
+resolution=300;size="8,5";
+"#Laundry" [shape = box, style=rounded, fontsize=12 fontname=helvetica];
+"#Laundry" -> "#Order" [ label = "#receives" ]
+"#Client" [shape = box, style=rounded, fontsize=12 fontname=helvetica];
+"#Client" -> "#Order" [ label = "#owns" ]
+"#Type" [shape = box, style=rounded, fontsize=12 fontname=helvetica];
+"xsd:string" [shape = box, style=filled,color="red", fontsize=12 fontname=helvetica];
+"#Type" -> "xsd:string" [ label = "#material" ]
+"#Order" [shape = box, style=rounded, fontsize=12 fontname=helvetica];
+"xsd:string" [shape = box, style=filled,color="red", fontsize=12 fontname=helvetica];
+"#Order" -> "xsd:string" [ label = "#orderid" ]
+}

@@ -8,7 +8,6 @@
 ********************************************************************************
 *   Content : Simple bibtex category counter (phDThesis, Misc, InProceeding,
 *             etc.), that occur in a document
-*
 ********************************************************************************/
 
 #include <stdio.h>

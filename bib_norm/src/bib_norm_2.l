@@ -6,9 +6,7 @@
 *   All Rights Reserved.
 *
 ********************************************************************************
-*   Content : Simple bibtex category counter (phDThesis, Misc, InProceeding,
-*             etc.), that occur in a document
-*
+*   Content : 2b) bibtex file normalizer and pretty-printer
 ********************************************************************************/
 
 #include <stdio.h>

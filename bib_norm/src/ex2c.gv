@@ -1,0 +1,58 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+digraph pl_2_2_a {
+//title
+labelloc="t";
+label="P. Henriques Document collaboration and co-authoring diagram";rankdir=TB;
+resolution=300;size="8,5";"P. Henriques"[shape = box,style=filled,color="red", style=rounded, fontsize=16 fontname=helvetica];
+node [shape = box, style=rounded, fontsize=12 fontname=helvetica]"P. Henriques" -> "L. Barbosa" [ label = "1" ]
+"P. Henriques" -> "L. Barroca" [ label = "1" ]
+"P. Henriques" -> "D. Rebernak" [ label = "4" ]
+"P. Henriques" -> "M. Mernik" [ label = "9" ]
+"P. Henriques" -> "F. Martins" [ label = "1" ]
+"P. Henriques" -> "V. Zumer" [ label = "3" ]
+"P. Henriques" -> "J. Almeida" [ label = "2" ]
+"P. Henriques" -> "S. Lopes" [ label = "1" ]
+"P. Henriques" -> "M. Varanda" [ label = "10" ]
+"P. Henriques" -> "J. AlmeidaJ." [ label = "1" ]
+"P. Henriques" -> "M. B?n" [ label = "1" ]
+"P. Henriques" -> "M. Lenic" [ label = "2" ]
+"P. Henriques" -> "L. Pinto" [ label = "1" ]
+"P. Henriques" -> "M. Pereira" [ label = "6" ]
+"P. Henriques" -> "R. Fonseca" [ label = "2" ]
+"P. Henriques" -> "J. Gray" [ label = "1" ]
+"P. Henriques" -> "H. Wu" [ label = "1" ]
+"P. Henriques" -> "T. Kosar" [ label = "3" ]
+"P. Henriques" -> "D. Cruz" [ label = "18" ]
+"P. Henriques" -> "J. Pinto" [ label = "1" ]
+}

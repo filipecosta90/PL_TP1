@@ -523,9 +523,8 @@ char *yytext;
 *   All Rights Reserved.
 *
 ********************************************************************************
-*   Content : Simple bibtex category counter (phDThesis, Misc, InProceeding,
-*             etc.), that occur in a document
-*
+*   Content : 2c) bibtex co-authoring graph builder for a given normalized.
+*             author name.
 ********************************************************************************/
 
 #include <stdio.h>
@@ -545,7 +544,7 @@ void print_graph();
 void check_authors();
 
 
-#line 549 "lex.yy.c"
+#line 548 "lex.yy.c"
 
 #define INITIAL 0
 #define INSIDE 1
@@ -733,10 +732,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 43 "bib_norm_3.l"
+#line 42 "bib_norm_3.l"
 
 
-#line 740 "lex.yy.c"
+#line 739 "lex.yy.c"
 
 	if ( !(yy_init) )
 		{
@@ -822,7 +821,7 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 45 "bib_norm_3.l"
+#line 44 "bib_norm_3.l"
 {
    //                         printf("%s\n",yytext);
                             BEGIN INSIDE;
@@ -830,7 +829,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 50 "bib_norm_3.l"
+#line 49 "bib_norm_3.l"
 {   
                           yytext[yyleng-2]='\0';
                           author_key = strdup ( yytext );
@@ -842,29 +841,29 @@ YY_RULE_SETUP
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 59 "bib_norm_3.l"
+#line 58 "bib_norm_3.l"
 { BEGIN INSIDE; }
 	YY_BREAK
 case 4:
 /* rule 4 can match eol */
 YY_RULE_SETUP
-#line 60 "bib_norm_3.l"
+#line 59 "bib_norm_3.l"
 { BEGIN INITIAL; }
 	YY_BREAK
 case 5:
 /* rule 5 can match eol */
 YY_RULE_SETUP
-#line 62 "bib_norm_3.l"
+#line 61 "bib_norm_3.l"
 { BEGIN INSIDE;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 63 "bib_norm_3.l"
+#line 62 "bib_norm_3.l"
 { BEGIN INSIDE;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 65 "bib_norm_3.l"
+#line 64 "bib_norm_3.l"
 {
                             author_initial = (char*) malloc ( 4* sizeof(char));
                             author_initial[0] = yytext[0];
@@ -879,7 +878,7 @@ case 8:
 (yy_c_buf_p) = yy_cp -= 5;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 74 "bib_norm_3.l"
+#line 73 "bib_norm_3.l"
 {   
                           author_lastname = strdup ( yytext );
                           author_lastname = g_strchomp ( author_lastname );
@@ -899,7 +898,7 @@ case 9:
 (yy_c_buf_p) = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 88 "bib_norm_3.l"
+#line 87 "bib_norm_3.l"
 { 
                           yytext[yyleng-1]='\0';
                           author_lastname = strdup ( yytext );
@@ -917,31 +916,31 @@ YY_RULE_SETUP
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 103 "bib_norm_3.l"
+#line 102 "bib_norm_3.l"
 { ; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 105 "bib_norm_3.l"
+#line 104 "bib_norm_3.l"
 { check_authors(); BEGIN INSIDE; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 107 "bib_norm_3.l"
+#line 106 "bib_norm_3.l"
 { BEGIN START_AUTHOR; }
 	YY_BREAK
 case 13:
 /* rule 13 can match eol */
 YY_RULE_SETUP
-#line 109 "bib_norm_3.l"
+#line 108 "bib_norm_3.l"
 {;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 111 "bib_norm_3.l"
+#line 110 "bib_norm_3.l"
 ECHO;
 	YY_BREAK
-#line 945 "lex.yy.c"
+#line 944 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(INSIDE):
 case YY_STATE_EOF(IN_AUTHOR):
@@ -1944,7 +1943,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 111 "bib_norm_3.l"
+#line 110 "bib_norm_3.l"
 
 
 
@@ -1978,7 +1977,7 @@ void graph_print(){
 g_hash_table_iter_init (&iter, coauthors_table );
 
 printf( "digraph pl_2_2_a {\n//title\nlabelloc=\"t\";\nlabel=\"%s Document collaboration and co-authoring diagram\";rankdir=TB;\nresolution=300;size=\"8,5\";", author_name);
-printf("\"%s\"[shape = box,fillcolor=red, style=rounded, fontsize=16 fontname=helvetica];\n", author_name);
+printf("\"%s\"[shape = box,style=filled,color=\"red\", style=rounded, fontsize=16 fontname=helvetica];\n", author_name);
 printf("node [shape = box, style=rounded, fontsize=12 fontname=helvetica]");
 while (g_hash_table_iter_next (&iter, &key, &value))
   {

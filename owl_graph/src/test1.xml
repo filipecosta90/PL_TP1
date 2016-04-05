@@ -1,0 +1,42 @@
+<ObjectPropertyDomain>
+  <ObjectProperty IRI="#receives"/>
+  <Class IRI="#Laundry"/>
+</ObjectPropertyDomain>
+<ObjectPropertyRange>
+  <Annotation>
+    <AnnotationProperty abbreviatedIRI="owl:backwardCompatibleWith"/>
+    <IRI>#Laundry</IRI>
+  </Annotation>
+  <ObjectProperty IRI="#receives"/>
+  <Class IRI="#Order"/>
+</ObjectPropertyRange>
+<ObjectPropertyDomain>
+  <ObjectProperty IRI="#owns"/>
+  <Class IRI="#Client"/>
+</ObjectPropertyDomain>
+<ObjectPropertyRange>
+  <Annotation>
+    <AnnotationProperty abbreviatedIRI="owl:backwardCompatibleWith"/>
+    <IRI>#Client</IRI>
+  </Annotation>
+  <ObjectProperty IRI="#owns"/>
+  <Class IRI="#Order"/>
+</ObjectPropertyRange>
+<DataPropertyDomain>
+  <DataProperty IRI="#material"/>
+  <Class IRI="#Type"/>
+</DataPropertyDomain>
+<DataPropertyRange>
+  <DataProperty IRI="#material"/>
+  <Datatype abbreviatedIRI="xsd:string"/>
+</DataPropertyRange>
+<DataPropertyDomain>
+  <DataProperty IRI="#orderid"/>
+  <Class IRI="#Order"/>
+</DataPropertyDomain>
+<DataPropertyRange>
+  <DataProperty IRI="#orderid"/>
+  <Datatype abbreviatedIRI="xsd:string"/>
+</DataPropertyRange>
+
+

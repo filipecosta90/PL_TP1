@@ -6,9 +6,8 @@
 *   All Rights Reserved.
 *
 ********************************************************************************
-*   Content : Simple bibtex category counter (phDThesis, Misc, InProceeding,
-*             etc.), that occur in a document
-*
+*   Content : 2c) bibtex co-authoring graph builder for a given normalized.
+*             author name.
 ********************************************************************************/
 
 #include <stdio.h>
@@ -140,7 +139,7 @@ void graph_print(){
 g_hash_table_iter_init (&iter, coauthors_table );
 
 printf( "digraph pl_2_2_a {\n//title\nlabelloc=\"t\";\nlabel=\"%s Document collaboration and co-authoring diagram\";rankdir=TB;\nresolution=300;size=\"8,5\";", author_name);
-printf("\"%s\"[shape = box,fillcolor=red, style=rounded, fontsize=16 fontname=helvetica];\n", author_name);
+printf("\"%s\"[shape = box,style=filled,color=\"red\", style=rounded, fontsize=16 fontname=helvetica];\n", author_name);
 printf("node [shape = box, style=rounded, fontsize=12 fontname=helvetica]");
 while (g_hash_table_iter_next (&iter, &key, &value))
   {
