@@ -360,8 +360,8 @@ static void yy_fatal_error (yyconst char msg[]  );
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
 
-#define YY_NUM_RULES 14
-#define YY_END_OF_BUFFER 15
+#define YY_NUM_RULES 13
+#define YY_END_OF_BUFFER 14
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -372,11 +372,11 @@ struct yy_trans_info
 static yyconst flex_int16_t yy_accept[67] =
     {   0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-        0,    0,    0,    0,   15,   13,   13,    6,    6,    5,
-        3,    6,    4,   10,   10,   14,   10,   10,   10,   14,
-       11,    7,    0,    0,    0,    3,    0,    4,    0,    0,
-        0,    0,    0,    0,    0,    9,    0,    0,    0,    9,
-        0,    0,    0,    1,    0,    0,    0,    0,    8,   12,
+        0,    0,    0,    0,   14,   12,   12,    5,    5,    5,
+        3,    5,    4,    9,    9,   13,    9,    9,    9,   13,
+       10,    6,    0,    0,    0,    3,    0,    4,    0,    0,
+        0,    0,    0,    0,    0,    8,    0,    0,    0,    8,
+        0,    0,    0,    1,    0,    0,    0,    0,    7,   11,
         0,    0,    0,    0,    2,    0
     } ;
 
@@ -822,14 +822,11 @@ case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
 #line 44 "bib_norm_3.l"
-{
-   //                         printf("%s\n",yytext);
-                            BEGIN INSIDE;
-                         }
+{ BEGIN INSIDE; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 49 "bib_norm_3.l"
+#line 46 "bib_norm_3.l"
 {   
                           yytext[yyleng-2]='\0';
                           author_key = strdup ( yytext );
@@ -841,44 +838,39 @@ YY_RULE_SETUP
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 58 "bib_norm_3.l"
+#line 54 "bib_norm_3.l"
 { BEGIN INSIDE; }
 	YY_BREAK
 case 4:
 /* rule 4 can match eol */
 YY_RULE_SETUP
-#line 59 "bib_norm_3.l"
+#line 55 "bib_norm_3.l"
 { BEGIN INITIAL; }
 	YY_BREAK
 case 5:
 /* rule 5 can match eol */
 YY_RULE_SETUP
-#line 61 "bib_norm_3.l"
+#line 57 "bib_norm_3.l"
 { BEGIN INSIDE;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 62 "bib_norm_3.l"
-{ BEGIN INSIDE;}
-	YY_BREAK
-case 7:
-YY_RULE_SETUP
-#line 64 "bib_norm_3.l"
+#line 59 "bib_norm_3.l"
 {
-                            author_initial = (char*) malloc ( 4* sizeof(char));
-                            author_initial[0] = yytext[0];
-                            author_initial[1] = '.';
-                            author_initial[2]=' ';
-                            author_initial[3]='\0';
-                            BEGIN IN_AUTHOR;
+                          author_initial = (char*) malloc ( 4* sizeof(char));
+                          author_initial[0] = yytext[0];
+                          author_initial[1] = '.';
+                          author_initial[2]=' ';
+                          author_initial[3]='\0';
+                          BEGIN IN_AUTHOR;
                          }
 	YY_BREAK
-case 8:
+case 7:
 *yy_cp = (yy_hold_char); /* undo effects of setting up yytext */
 (yy_c_buf_p) = yy_cp -= 5;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 73 "bib_norm_3.l"
+#line 68 "bib_norm_3.l"
 {   
                           author_lastname = strdup ( yytext );
                           author_lastname = g_strchomp ( author_lastname );
@@ -893,12 +885,12 @@ YY_RULE_SETUP
                           BEGIN AUTHOR_DIV;
                           }
 	YY_BREAK
-case 9:
+case 8:
 *yy_cp = (yy_hold_char); /* undo effects of setting up yytext */
 (yy_c_buf_p) = yy_cp -= 1;
 YY_DO_BEFORE_ACTION; /* set up yytext again */
 YY_RULE_SETUP
-#line 87 "bib_norm_3.l"
+#line 82 "bib_norm_3.l"
 { 
                           yytext[yyleng-1]='\0';
                           author_lastname = strdup ( yytext );
@@ -914,33 +906,33 @@ YY_RULE_SETUP
                           BEGIN AUTHOR_DIV;
 }
 	YY_BREAK
+case 9:
+YY_RULE_SETUP
+#line 97 "bib_norm_3.l"
+{ ; }
+	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 102 "bib_norm_3.l"
-{ ; }
+#line 98 "bib_norm_3.l"
+{ check_authors(); BEGIN INSIDE; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 104 "bib_norm_3.l"
-{ check_authors(); BEGIN INSIDE; }
-	YY_BREAK
-case 12:
-YY_RULE_SETUP
-#line 106 "bib_norm_3.l"
+#line 99 "bib_norm_3.l"
 { BEGIN START_AUTHOR; }
 	YY_BREAK
-case 13:
-/* rule 13 can match eol */
+case 12:
+/* rule 12 can match eol */
 YY_RULE_SETUP
-#line 108 "bib_norm_3.l"
+#line 100 "bib_norm_3.l"
 {;}
 	YY_BREAK
-case 14:
+case 13:
 YY_RULE_SETUP
-#line 110 "bib_norm_3.l"
+#line 102 "bib_norm_3.l"
 ECHO;
 	YY_BREAK
-#line 944 "lex.yy.c"
+#line 936 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(INSIDE):
 case YY_STATE_EOF(IN_AUTHOR):
@@ -1943,7 +1935,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 110 "bib_norm_3.l"
+#line 102 "bib_norm_3.l"
 
 
 
@@ -1972,20 +1964,20 @@ void check_authors(){
 
 void graph_print(){
 
- GHashTableIter iter;
- gpointer key, value;
-g_hash_table_iter_init (&iter, coauthors_table );
+  GHashTableIter iter;
+  gpointer key, value;
+  g_hash_table_iter_init (&iter, coauthors_table );
 
-printf( "digraph pl_2_2_a {\n//title\nlabelloc=\"t\";\nlabel=\"%s Document collaboration and co-authoring diagram\";rankdir=TB;\nresolution=300;size=\"8,5\";", author_name);
-printf("\"%s\"[shape = box,style=filled,color=\"red\", style=rounded, fontsize=16 fontname=helvetica];\n", author_name);
-printf("node [shape = box, style=rounded, fontsize=12 fontname=helvetica]");
-while (g_hash_table_iter_next (&iter, &key, &value))
+  printf( "digraph pl_2_2_a {\n//title\nlabelloc=\"t\";\nlabel=\"%s Document collaboration and co-authoring diagram\";rankdir=TB;\nresolution=300;size=\"8,5\";", author_name);
+  printf("\"%s\"[shape = box,style=filled,color=\"red\", style=rounded, fontsize=16 fontname=helvetica];\n", author_name);
+  printf("node [shape = box, style=rounded, fontsize=12 fontname=helvetica]");
+  while (g_hash_table_iter_next (&iter, &key, &value))
   {
-   char* coauthor_name = g_str_to_ascii ((char*) key, "C");
-int number_entries = GPOINTER_TO_INT( value );
-  printf("\"%s\" -> \"%s\" [ label = \"%d\" ]\n", author_name, coauthor_name, number_entries );
-}
-printf("}\n");
+    char* coauthor_name = g_str_to_ascii ((char*) key, "C");
+    int number_entries = GPOINTER_TO_INT( value );
+    printf("\"%s\" -> \"%s\" [ label = \"%d\" ]\n", author_name, coauthor_name, number_entries );
+  }
+  printf("}\n");
 } 
 
 int yywrap(){return 1;}
@@ -1994,7 +1986,7 @@ int main(int argc, char** argv){
   authors_table = g_hash_table_new(g_str_hash, g_str_equal);
   coauthors_table = g_hash_table_new(g_str_hash, g_str_equal);
   author_name = strdup(argv[1]);
-yylex();
+  yylex();
   graph_print();
   return (0);
 }

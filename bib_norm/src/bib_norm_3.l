@@ -41,10 +41,7 @@ AUTHOR_BREAK [^=]+(\"|\})
 
 %%
 
-{CATEG}[^=]*,        {
-   //                         printf("%s\n",yytext);
-                            BEGIN INSIDE;
-                         }
+{CATEG}[^=]*,           { BEGIN INSIDE; }
 
 <INSIDE>{AUTHOR_ID}{FIELD_START}  {   
                           yytext[yyleng-2]='\0';
@@ -54,20 +51,18 @@ AUTHOR_BREAK [^=]+(\"|\})
                           BEGIN START_AUTHOR;
 }
 
+<INSIDE>[ \n\t]*,       { BEGIN INSIDE; }
+<INSIDE>[ \n\t]*\}      { BEGIN INITIAL; }
 
-<INSIDE>[ \n\t]*, { BEGIN INSIDE; }
-<INSIDE>[ \n\t]*\} { BEGIN INITIAL; }
-
-<INSIDE>\n { BEGIN INSIDE;}
-<INSIDE>. { BEGIN INSIDE;}
+<INSIDE>.|\n              { BEGIN INSIDE;}
 
 <START_AUTHOR>.           {
-                            author_initial = (char*) malloc ( 4* sizeof(char));
-                            author_initial[0] = yytext[0];
-                            author_initial[1] = '.';
-                            author_initial[2]=' ';
-                            author_initial[3]='\0';
-                            BEGIN IN_AUTHOR;
+                          author_initial = (char*) malloc ( 4* sizeof(char));
+                          author_initial[0] = yytext[0];
+                          author_initial[1] = '.';
+                          author_initial[2]=' ';
+                          author_initial[3]='\0';
+                          BEGIN IN_AUTHOR;
                          }
 
 <IN_AUTHOR>[^= \n\t]*/[ ]and[ ]     {   
@@ -100,11 +95,8 @@ AUTHOR_BREAK [^=]+(\"|\})
 }
 
 <IN_AUTHOR>.              { ; }
-
 <AUTHOR_DIV>,             { check_authors(); BEGIN INSIDE; }
-
 <AUTHOR_DIV>[ ]and[ ]             { BEGIN START_AUTHOR; }
-
 <INITIAL>.|\n {;}
 
 %%
@@ -134,20 +126,20 @@ void check_authors(){
 
 void graph_print(){
 
- GHashTableIter iter;
- gpointer key, value;
-g_hash_table_iter_init (&iter, coauthors_table );
+  GHashTableIter iter;
+  gpointer key, value;
+  g_hash_table_iter_init (&iter, coauthors_table );
 
-printf( "digraph pl_2_2_a {\n//title\nlabelloc=\"t\";\nlabel=\"%s Document collaboration and co-authoring diagram\";rankdir=TB;\nresolution=300;size=\"8,5\";", author_name);
-printf("\"%s\"[shape = box,style=filled,color=\"red\", style=rounded, fontsize=16 fontname=helvetica];\n", author_name);
-printf("node [shape = box, style=rounded, fontsize=12 fontname=helvetica]");
-while (g_hash_table_iter_next (&iter, &key, &value))
+  printf( "digraph pl_2_2_a {\n//title\nlabelloc=\"t\";\nlabel=\"%s Document collaboration and co-authoring diagram\";rankdir=TB;\nresolution=300;size=\"8,5\";", author_name);
+  printf("\"%s\"[shape = box,style=filled,color=\"red\", style=rounded, fontsize=16 fontname=helvetica];\n", author_name);
+  printf("node [shape = box, style=rounded, fontsize=12 fontname=helvetica]");
+  while (g_hash_table_iter_next (&iter, &key, &value))
   {
-   char* coauthor_name = g_str_to_ascii ((char*) key, "C");
-int number_entries = GPOINTER_TO_INT( value );
-  printf("\"%s\" -> \"%s\" [ label = \"%d\" ]\n", author_name, coauthor_name, number_entries );
-}
-printf("}\n");
+    char* coauthor_name = g_str_to_ascii ((char*) key, "C");
+    int number_entries = GPOINTER_TO_INT( value );
+    printf("\"%s\" -> \"%s\" [ label = \"%d\" ]\n", author_name, coauthor_name, number_entries );
+  }
+  printf("}\n");
 } 
 
 int yywrap(){return 1;}
@@ -156,7 +148,7 @@ int main(int argc, char** argv){
   authors_table = g_hash_table_new(g_str_hash, g_str_equal);
   coauthors_table = g_hash_table_new(g_str_hash, g_str_equal);
   author_name = strdup(argv[1]);
-yylex();
+  yylex();
   graph_print();
   return (0);
 }

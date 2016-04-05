@@ -45,7 +45,6 @@ ID ({LETRA_NUM}|:)+
 
 int yywrap(){return 1;}
 
-
 static void print_key_value(gpointer key, gpointer value, gpointer userdata)
 {
         int val = (int) value;

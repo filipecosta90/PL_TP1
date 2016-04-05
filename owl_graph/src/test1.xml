@@ -10,6 +10,21 @@
   <ObjectProperty IRI="#receives"/>
   <Class IRI="#Order"/>
 </ObjectPropertyRange>
+
+<ObjectPropertyDomain>
+  <ObjectProperty IRI="#works"/>
+  <Class IRI="#Worker"/>
+</ObjectPropertyDomain>
+<ObjectPropertyRange>
+  <Annotation>
+    <AnnotationProperty abbreviatedIRI="owl:backwardCompatibleWith"/>
+    <IRI>#Worker</IRI>
+  </Annotation>
+  <ObjectProperty IRI="#works"/>
+  <Class IRI="#Laundry"/>
+</ObjectPropertyRange>
+
+
 <ObjectPropertyDomain>
   <ObjectProperty IRI="#owns"/>
   <Class IRI="#Client"/>
@@ -22,6 +37,16 @@
   <ObjectProperty IRI="#owns"/>
   <Class IRI="#Order"/>
 </ObjectPropertyRange>
+
+<SubClassOf>
+  <Class IRI="#Laundry"/>
+  <Class IRI="#Stores"/>
+</SubClassOf>
+<SubClassOf>
+  <Class IRI="#Owner"/>
+  <Class IRI="#Person"/>
+</SubClassOf>
+
 <DataPropertyDomain>
   <DataProperty IRI="#material"/>
   <Class IRI="#Type"/>
@@ -30,6 +55,7 @@
   <DataProperty IRI="#material"/>
   <Datatype abbreviatedIRI="xsd:string"/>
 </DataPropertyRange>
+
 <DataPropertyDomain>
   <DataProperty IRI="#orderid"/>
   <Class IRI="#Order"/>
@@ -38,5 +64,11 @@
   <DataProperty IRI="#orderid"/>
   <Datatype abbreviatedIRI="xsd:string"/>
 </DataPropertyRange>
-
-
+<SubClassOf>
+  <Class IRI="#Client"/>
+  <Class IRI="#Person"/>
+</SubClassOf>
+<SubClassOf>
+  <Class IRI="#Worker"/>
+  <Class IRI="#Person"/>
+</SubClassOf>

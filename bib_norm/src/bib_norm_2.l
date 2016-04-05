@@ -49,9 +49,9 @@ AUTHOR_BREAK [^=]+(\"|\})
 
 %%
 
-{CATEG}[^=]*,        {
-                            printf("%s\n",yytext);
-                            BEGIN INSIDE;
+{CATEG}[^=]*,            {
+                          printf("%s\n",yytext);
+                          BEGIN INSIDE;
                          }
 
 <INSIDE>{TITLE_ID}{FIELD_START}  {   
@@ -87,11 +87,9 @@ AUTHOR_BREAK [^=]+(\"|\})
 
 <INSIDE>[ \n\t]*, { BEGIN INSIDE; }
 <INSIDE>[ \n\t]*\} { BEGIN INITIAL; }
+<INSIDE>.|\n { BEGIN INSIDE;}
 
-<INSIDE>\n { BEGIN INSIDE;}
-<INSIDE>. { BEGIN INSIDE;}
-
-<START_AUTHOR>.           {
+<START_AUTHOR>.          {
                             author_initial = (char*) malloc ( 4* sizeof(char));
                             author_initial[0] = yytext[0];
                             author_initial[1] = '.';
@@ -133,110 +131,107 @@ AUTHOR_BREAK [^=]+(\"|\})
 
 <AUTHOR_DIV>,             { BEGIN INSIDE; }
 
-<AUTHOR_DIV>[ ]and[ ]             { BEGIN START_AUTHOR; }
+<AUTHOR_DIV>[ ]and[ ]     { BEGIN START_AUTHOR; }
 
 
 <IN_FIELD_NUM>{FIELD_BREAK_NUM}[ \n\t\r]*\} {
                             yytext[yyleng-1]='\0';
                             field = strdup(yytext);
-                           field = g_strchomp ( field );
-                          field = g_strchug ( field );
-                           g_hash_table_insert (  num_fields_table, (void*) field_id,  (void*) field );
+                            field = g_strchomp ( field );
+                            field = g_strchug ( field );
+                            g_hash_table_insert (  num_fields_table, (void*) field_id,  (void*) field );
                             pretty_print();
-                           BEGIN INITIAL;}
+                            BEGIN INITIAL;
+                            }
 
 <IN_FIELD_NUM>{FIELD_BREAK_NUM}[ \n\t\r]*(#[^,=]*)?, {
                             yytext[yyleng-1]='\0';
                             field = strdup(yytext);
-                           field = g_strchomp ( field );
-                          field = g_strchug ( field );
-                         g_hash_table_insert (  num_fields_table, (void*) field_id,  (void*) field );
-
-                            BEGIN INSIDE;}
+                            field = g_strchomp ( field );
+                            field = g_strchug ( field );
+                            g_hash_table_insert (  num_fields_table, (void*) field_id,  (void*) field );
+                            BEGIN INSIDE;
+                            }
 
 <IN_FIELD_TXT>{FIELD_BREAK}[ \n\t\r]*\} {
                             yytext[yyleng-2]='\0';
                             field = strdup(yytext);
-                           field = g_strchomp ( field );
-                          field = g_strchug ( field );
-                             g_hash_table_insert (  txt_fields_table, (void*) field_id,  (void*) field );
+                            field = g_strchomp ( field );
+                            field = g_strchug ( field );
+                            g_hash_table_insert (  txt_fields_table, (void*) field_id,  (void*) field );
                             BEGIN INITIAL;
-                            pretty_print();}
+                            pretty_print();
+                            }
 
 <IN_FIELD_TXT>{FIELD_BREAK}[ \n\t\r]*(#[^,=]*)?, {
                             yytext[yyleng-2]='\0';
                             field = strdup(yytext);
-                           field = g_strchomp ( field );
-                          field = g_strchug ( field );
-                             g_hash_table_insert (  txt_fields_table, (void*) field_id,  (void*) field );
-                            BEGIN INSIDE;}
+                            field = g_strchomp ( field );
+                            field = g_strchug ( field );
+                            g_hash_table_insert (  txt_fields_table, (void*) field_id,  (void*) field );
+                            BEGIN INSIDE;
+                            }
 
 <IN_FIELD_TXT>.|\n {;}
 <IN_FIELD_NUM>.|\n {;}
 
-{CATEG}[^\n]*\}        {
-                         printf("%s\n",yytext);
-                         }
+{CATEG}[^\n]*\}             { printf("%s\n",yytext);}
 
 <INITIAL>.|\n {;}
 
 %%
 
 void pretty_print(){
-int field_num = 0;
-char* current_value;
+  int field_num = 0;
+  char* current_value;
 
-GHashTableIter iter;
-gpointer key, value;
+  GHashTableIter iter;
+  gpointer key, value;
 
-if( title_key != NULL ){
+  if( title_key != NULL ){
     current_value =  g_hash_table_lookup ( txt_fields_table,(void*) title_key);
     g_hash_table_remove ( txt_fields_table, (void*) title_key);
     printf("\t%s {%s}", title_key, current_value);
     field_num++;
-}
-if ( author_key != NULL ){
+  }
 
-if(field_num > 0){ printf(",\n"); }
+  if ( author_key != NULL ){
+    if(field_num > 0){ printf(",\n"); }
     printf("\t%s {", author_key);
-int number_authors = g_hash_table_size ( authors_table );
-int author_num = 1;
-g_hash_table_iter_init (&iter, authors_table );
-while (g_hash_table_iter_next (&iter, &key, &value))
-  {
-    if(author_num > 1 ){ printf("\n\t\tand "); }
-   char* name = (char*) key;
-    printf("%s", name);
- g_hash_table_iter_remove (&iter);
-author_num++;
-} 
-  printf("}");
+    int number_authors = g_hash_table_size ( authors_table );
+    int author_num = 1;
+    g_hash_table_iter_init (&iter, authors_table );
+    while (g_hash_table_iter_next (&iter, &key, &value)){
+      if(author_num > 1 ){ printf("\n\t\tand "); }
+      char* name = (char*) key;
+      printf("%s", name);
+      g_hash_table_iter_remove (&iter);
+      author_num++;
+    } 
+    printf("}");
     field_num++;
-}
+  }
 
-int size = g_hash_table_size ( txt_fields_table );
-size += g_hash_table_size ( num_fields_table );
-
-g_hash_table_iter_init (&iter, txt_fields_table );
-while (g_hash_table_iter_next (&iter, &key, &value))
-  {
+  int size = g_hash_table_size ( txt_fields_table );
+  size += g_hash_table_size ( num_fields_table );
+  g_hash_table_iter_init (&iter, txt_fields_table );
+  while (g_hash_table_iter_next (&iter, &key, &value)){
     if(field_num > 0 ){ printf(",\n"); }
-   char* val = (char*) value;
-   char* ke = (char*) key;
+    char* val = (char*) value;
+    char* ke = (char*) key;
     printf("\t%s {%s}", ke, val);
- g_hash_table_iter_remove (&iter);
-} 
+    g_hash_table_iter_remove (&iter);
+  } 
 
-g_hash_table_iter_init (&iter, num_fields_table );
-while (g_hash_table_iter_next (&iter, &key, &value))
-  {
+  g_hash_table_iter_init (&iter, num_fields_table );
+  while (g_hash_table_iter_next (&iter, &key, &value)){
     if(field_num > 0 ){ printf(",\n"); }
-   char* val = (char*) value;
-   char* ke = (char*) key;
+    char* val = (char*) value;
+    char* ke = (char*) key;
     printf("\t%s %s", ke, val);
- g_hash_table_iter_remove (&iter);
-        }
-                            printf("\n}\n\n");
+    g_hash_table_iter_remove (&iter);
+  }
+  printf("\n}\n\n");
 }
 
 int yywrap(){return 1;}

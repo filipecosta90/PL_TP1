@@ -5,12 +5,26 @@ label="OWL concept diagram";rankdir=TB;
 resolution=300;size="8,5";
 "#Laundry" [shape = box, style=rounded, fontsize=12 fontname=helvetica];
 "#Laundry" -> "#Order" [ label = "#receives" ]
+"#Worker" [shape = box, style=rounded, fontsize=12 fontname=helvetica];
+"#Worker" -> "#Laundry" [ label = "#works" ]
 "#Client" [shape = box, style=rounded, fontsize=12 fontname=helvetica];
 "#Client" -> "#Order" [ label = "#owns" ]
+"#Laundry" [shape = box, style=rounded, fontsize=12 fontname=helvetica];
+"#Stores" [shape = box, style=rounded, fontsize=12 fontname=helvetica];
+"#Laundry" -> "#Stores" [ label = "SubClassOf" , fontsize=8 , fontcolor="blue", color="blue" ]
+"#Owner" [shape = box, style=rounded, fontsize=12 fontname=helvetica];
+"#Person" [shape = box, style=rounded, fontsize=12 fontname=helvetica];
+"#Owner" -> "#Person" [ label = "SubClassOf" , fontsize=8 , fontcolor="blue", color="blue" ]
 "#Type" [shape = box, style=rounded, fontsize=12 fontname=helvetica];
 "xsd:string" [shape = box, style=filled,color="red", fontsize=12 fontname=helvetica];
 "#Type" -> "xsd:string" [ label = "#material" ]
 "#Order" [shape = box, style=rounded, fontsize=12 fontname=helvetica];
 "xsd:string" [shape = box, style=filled,color="red", fontsize=12 fontname=helvetica];
 "#Order" -> "xsd:string" [ label = "#orderid" ]
+"#Client" [shape = box, style=rounded, fontsize=12 fontname=helvetica];
+"#Person" [shape = box, style=rounded, fontsize=12 fontname=helvetica];
+"#Client" -> "#Person" [ label = "SubClassOf" , fontsize=8 , fontcolor="blue", color="blue" ]
+"#Worker" [shape = box, style=rounded, fontsize=12 fontname=helvetica];
+"#Person" [shape = box, style=rounded, fontsize=12 fontname=helvetica];
+"#Worker" -> "#Person" [ label = "SubClassOf" , fontsize=8 , fontcolor="blue", color="blue" ]
 }
